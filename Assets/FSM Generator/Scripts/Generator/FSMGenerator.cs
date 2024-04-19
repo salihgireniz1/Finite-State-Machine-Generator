@@ -28,17 +28,17 @@ public class FSMGenerator : ScriptableObject
 
     [HideInInspector]
     public int defaultStateIndex;
-    public bool CanGenerate()
+    public Task<bool> CanGenerate()
     {
         if (string.IsNullOrEmpty(path) || string.IsNullOrWhiteSpace(path))
         {
             Debug.LogError("Please provide a path.");
-            return false;
+            return Task.FromResult(false);
         }
         if (string.IsNullOrEmpty(stateMachineName) || string.IsNullOrWhiteSpace(stateMachineName))
         {
             Debug.LogError("Please provide a name for state machine.");
-            return false;
+            return Task.FromResult(false);
         }
         else
         {
@@ -57,13 +57,14 @@ public class FSMGenerator : ScriptableObject
         if (states == null || states.Count == 0)
         {
             Debug.LogError("Please at least one state to insert into machine.");
-            return false;
+            return Task.FromResult(false);
         }
-        return true;
+        return Task.FromResult(true);
     }
-    public async Task GenerateFSM()
+    public async void GenerateFSM()
     {
-        if (!CanGenerate()) return;
+        bool canGenerate = await CanGenerate();
+        if (!canGenerate) return;
 
         Debug.Log($"Generating FSM at path: {path}");
 
@@ -73,14 +74,12 @@ public class FSMGenerator : ScriptableObject
             Debug.Log("Directory does not exist, creating new directory.");
             Directory.CreateDirectory(path);
         }
-
-        // Generate each state class
-        foreach (string state in states)
+        for (int i = 0; i < states.Count; i++)
         {
-            string filePath = Path.Combine(path, state + ".cs");
+            string filePath = Path.Combine(path, states[i] + ".cs");
             if (!File.Exists(filePath))
             {
-                string stateClassContent = GenerateStateClass(state);
+                string stateClassContent = GenerateStateClass(states[i]);
                 await File.WriteAllTextAsync(filePath, stateClassContent);
                 Debug.Log($"Generated state class at: {filePath}");
             }
@@ -89,6 +88,21 @@ public class FSMGenerator : ScriptableObject
                 Debug.Log($"File {filePath} already exists. Skipping to preserve existing content.");
             }
         }
+        // // Generate each state class
+        // foreach (string state in states)
+        // {
+        //     string filePath = Path.Combine(path, state + ".cs");
+        //     if (!File.Exists(filePath))
+        //     {
+        //         string stateClassContent = GenerateStateClass(state);
+        //         await File.WriteAllTextAsync(filePath, stateClassContent);
+        //         Debug.Log($"Generated state class at: {filePath}");
+        //     }
+        //     else
+        //     {
+        //         Debug.Log($"File {filePath} already exists. Skipping to preserve existing content.");
+        //     }
+        // }
 
 
         // Update the state machine class

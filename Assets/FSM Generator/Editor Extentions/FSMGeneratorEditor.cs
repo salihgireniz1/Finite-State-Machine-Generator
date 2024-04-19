@@ -4,7 +4,7 @@ using UnityEngine;
 [CustomEditor(typeof(FSMGenerator))]
 public class FSMGeneratorEditor : Editor
 {
-    public override async void OnInspectorGUI()
+    public override void OnInspectorGUI()
     {
         FSMGenerator generator = (FSMGenerator)target;
 
@@ -26,7 +26,7 @@ public class FSMGeneratorEditor : Editor
         // Generates or updates the FSM when the "Generate/Update FSM" button is clicked.
         if (GUILayout.Button("Generate/Update FSM"))
         {
-            await generator.GenerateFSM();
+            generator.GenerateFSM();
         }
     }
 }
