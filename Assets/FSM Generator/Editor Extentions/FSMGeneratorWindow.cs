@@ -11,7 +11,7 @@ using System;
 public class FSMGeneratorWindow : EditorWindow
 {
     private string stateMachineName = "NewStateMachine";
-    private string path = "FSM";
+    private string path = "Assets/FSM";
     private List<string> states = new List<string>();
     public int defaultStateIndex;
 
@@ -32,7 +32,7 @@ public class FSMGeneratorWindow : EditorWindow
         GUILayout.Label("Create a New Finite State Machine", EditorStyles.boldLabel);
 
         stateMachineName = EditorGUILayout.TextField("State Machine Name", stateMachineName);
-        path = EditorGUILayout.TextField("Path (relative to Assets/)", path);
+        path = EditorGUILayout.TextField("Path)", path);
 
         GUILayout.Label("States:");
         if (states.Count == 0 || !string.IsNullOrEmpty(states[states.Count - 1]))
@@ -103,6 +103,7 @@ public class FSMGeneratorWindow : EditorWindow
                     UpdateExistingGenerator(existingGenerator);
                     return;
                 }
+                return;
             }
         }
 
@@ -112,15 +113,15 @@ public class FSMGeneratorWindow : EditorWindow
     /// <summary>
     /// Creates a new FSMGenerator asset.
     /// </summary>
-    private void CreateNewFSMGenerator()
+    private async void CreateNewFSMGenerator()
     {
         FSMGenerator generator = CreateInstance<FSMGenerator>();
         generator.stateMachineName = stateMachineName;
         generator.states = states;
         generator.defaultStateIndex = defaultStateIndex;
-        generator.path = NormalizePath(path);
+        generator.path = path;
 
-        string fullPath = Path.Combine("Assets", generator.path, $"{stateMachineName} Generator.asset");
+        string fullPath = Path.Combine(generator.path, $"{stateMachineName} Generator.asset");
         fullPath = AssetDatabase.GenerateUniqueAssetPath(fullPath);
 
         if (!Directory.Exists(Path.Combine(Application.dataPath, generator.path)))
@@ -133,36 +134,22 @@ public class FSMGeneratorWindow : EditorWindow
 
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = generator;
+        await generator.GenerateFSM();
     }
 
     /// <summary>
     /// Updates an existing FSMGenerator asset.
     /// </summary>
     /// <param name="existingGenerator">The existing FSMGenerator to update.</param>
-    private void UpdateExistingGenerator(FSMGenerator existingGenerator)
+    private async void UpdateExistingGenerator(FSMGenerator existingGenerator)
     {
         existingGenerator.states = states;
         existingGenerator.defaultStateIndex = defaultStateIndex;
-        existingGenerator.path = NormalizePath(path);
-
-        EditorUtility.SetDirty(existingGenerator);
-        AssetDatabase.SaveAssets();
+        existingGenerator.path = path;
 
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = existingGenerator;
-    }
 
-    /// <summary>
-    /// Normalizes the path to ensure it does not start with 'Assets/'.
-    /// </summary>
-    /// <param name="inputPath">The input path to normalize.</param>
-    /// <returns>The normalized path.</returns>
-    private string NormalizePath(string inputPath)
-    {
-        if (inputPath.StartsWith("Assets/", StringComparison.OrdinalIgnoreCase))
-        {
-            return inputPath.Substring("Assets/".Length);
-        }
-        return inputPath;
+        await existingGenerator.GenerateFSM();
     }
 }
