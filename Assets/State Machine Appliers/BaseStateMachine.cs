@@ -2,15 +2,21 @@ using R3;
 using System;
 using UnityEngine;
 using System.Threading;
+
+/// <summary>
+/// Base class for all state machines.
+/// </summary>
 public class BaseStateMachine : MonoBehaviour
 {
-    public IState CurrentState { get => currentState; }
+    public IState CurrentState => currentState;
     protected IState currentState;
     protected IState defaultState;
-    protected IDisposable updateDisposable;
-    protected IDisposable fixedUpdateDisposable;
-    protected IDisposable lateUpdateDisposable;
-    protected CancellationTokenSource cancellationTokenSource;
+
+    // A single CancellationTokenSource for all updates
+    protected CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+    // CompositeDisposable to manage all subscriptions
+    protected CompositeDisposable disposables = new CompositeDisposable();
 
     #region MonoBehaviour Callbacks
 
@@ -18,6 +24,7 @@ public class BaseStateMachine : MonoBehaviour
     {
         GenerateStates();
     }
+
     protected virtual void Start()
     {
         if (defaultState != null) ChangeState(defaultState);
@@ -25,15 +32,20 @@ public class BaseStateMachine : MonoBehaviour
         StartFixedUpdate();
         StartLateUpdate();
     }
-    private void OnDestroy()
+
+    protected virtual void OnDestroy()
     {
         StopUpdates();
     }
+
     #endregion
 
     #region Overrideables
 
-    ///<inheritdoc/>
+    /// <summary>
+    /// Changes the current state to the new state provided.
+    /// </summary>
+    /// <param name="newState">The new state to transition to.</param>
     public virtual void ChangeState(IState newState)
     {
         if (newState == null)
@@ -46,37 +58,57 @@ public class BaseStateMachine : MonoBehaviour
         currentState = newState;
         currentState.Enter();
     }
+
     /// <summary>
-    /// Generates the defined states for the state machine.
-    /// </summary>s
-    protected virtual void GenerateStates() { }
+    /// Generates the defined states for the state machine. Should be overridden to initialize states.
+    /// </summary>
+    protected virtual void GenerateStates()
+    {
+        // Intended to be overridden by derived classes to set up states.
+    }
+
     #endregion
 
-    #region Persistant Methods
+    #region Update Methods
+
+    /// <summary>
+    /// Subscribes to the update loop.
+    /// </summary>
     protected void StartUpdate()
     {
-        cancellationTokenSource = new();
-        updateDisposable = Observable.EveryUpdate(UnityFrameProvider.Update, cancellationTokenSource.Token)
+        var updateSubscription = Observable.EveryUpdate(UnityFrameProvider.Update, cancellationTokenSource.Token)
             .Subscribe(_ => CurrentState?.StateUpdate());
+        disposables.Add(updateSubscription);
     }
+
+    /// <summary>
+    /// Subscribes to the fixed update loop.
+    /// </summary>
     protected void StartFixedUpdate()
     {
-        cancellationTokenSource = cancellationTokenSource == null ? new() : cancellationTokenSource;
-        fixedUpdateDisposable = Observable.EveryUpdate(UnityFrameProvider.FixedUpdate, cancellationTokenSource.Token)
+        var fixedUpdateSubscription = Observable.EveryUpdate(UnityFrameProvider.FixedUpdate, cancellationTokenSource.Token)
             .Subscribe(_ => CurrentState?.StateFixedUpdate());
+        disposables.Add(fixedUpdateSubscription);
     }
+
+    /// <summary>
+    /// Subscribes to the late update loop.
+    /// </summary>
     protected void StartLateUpdate()
     {
-        cancellationTokenSource = cancellationTokenSource == null ? new() : cancellationTokenSource;
-        lateUpdateDisposable = Observable.EveryUpdate(UnityFrameProvider.PreLateUpdate, cancellationTokenSource.Token)
+        var lateUpdateSubscription = Observable.EveryUpdate(UnityFrameProvider.PreLateUpdate, cancellationTokenSource.Token)
             .Subscribe(_ => CurrentState?.StateLateUpdate());
+        disposables.Add(lateUpdateSubscription);
     }
+
+    /// <summary>
+    /// Cancels all subscriptions to update loops and disposes of the disposables.
+    /// </summary>
     protected void StopUpdates()
     {
-        cancellationTokenSource?.Cancel();
-        fixedUpdateDisposable?.Dispose();
-        lateUpdateDisposable?.Dispose();
-        updateDisposable?.Dispose();
+        cancellationTokenSource.Cancel();
+        disposables.Dispose();
     }
+
     #endregion
 }
