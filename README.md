@@ -20,7 +20,15 @@ This project relies on the following packages:
 
 Before installing FSM Generator, ensure the following packages are installed in your Unity project:
 
-### 1. R3
+
+### 1. NuGetForUnity
+Enables the use of NuGet packages directly in Unity projects.
+
+**Installation**:
+- Download the latest `.unitypackage` from [NuGetForUnity Releases](https://github.com/GlitchEnzo/NuGetForUnity/releases).
+- Import it into your Unity project via `Assets -> Import Package -> Custom Package...`.
+
+### 2. R3
 R3 enhances Unity's capabilities with advanced runtime features. The minimum supported Unity version for R3 is Unity 2021.3.
 
 **Installation Steps**:
@@ -32,13 +40,6 @@ R3 enhances Unity's capabilities with advanced runtime features. The minimum sup
 2. **Install the R3.Unity Package via Git URL**:
    - Use the Git URL: `https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity`
    - You can specify a version by appending a release tag, e.g., `#1.0.0`.
-
-### 2. NuGetForUnity
-Enables the use of NuGet packages directly in Unity projects.
-
-**Installation**:
-- Download the latest `.unitypackage` from [NuGetForUnity Releases](https://github.com/GlitchEnzo/NuGetForUnity/releases).
-- Import it into your Unity project via `Assets -> Import Package -> Custom Package...`.
 
 ### Installing FSM Generator
 
