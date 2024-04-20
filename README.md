@@ -44,7 +44,7 @@ R3 enhances Unity's capabilities with advanced runtime features. The minimum sup
 ### Installing FSM Generator
 
 Once the dependencies are installed:
-1. Download the latest FSM Generator release from the [Releases page](https://github.com/salihgireniz1/fsm-generator/releases).
+1. Download the latest FSM Generator release from the [Releases page](https://github.com/salihgireniz1/Finite-State-Machine-Generator/releases).
 2. Import the package into your Unity project via `Assets -> Import Package -> Custom Package...` and select the downloaded package.
 
 ### Installing FSM Generator
