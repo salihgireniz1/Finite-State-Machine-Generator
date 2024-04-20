@@ -17,9 +17,8 @@ This project relies on the following packages:
 - **NuGetForUnity** - A NuGet client for Unity, which allows the integration of NuGet packages directly into your Unity projects. [Learn more about NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 
 ## Installation
-
+https://github.com/salihgireniz1/Finite-State-Machine-Generator/assets/78977599/564d2f7b-5449-4208-b812-e919f91130e7
 Before installing FSM Generator, ensure the following packages are installed in your Unity project:
-
 
 ### 1. NuGetForUnity
 Enables the use of NuGet packages directly in Unity projects.
@@ -56,7 +55,7 @@ Once the dependencies are installed, you can add FSM Generator to your project b
 ## Usage
 
 The FSM Generator can be used in two primary ways: through the Unity Editor window or by manually creating and configuring the Scriptable Object.
-
+https://github.com/salihgireniz1/Finite-State-Machine-Generator/assets/78977599/5dbc82ec-6fec-47fa-b6a4-aa8386454ef7
 ### Using the Editor Window
 
 To open the FSM Generator window, navigate to `Tools -> FSM Generator` in the Unity menu bar. This window provides a user-friendly interface to create and manage state machines directly within Unity. Here you can:
@@ -95,4 +94,3 @@ Contributions to FSM Generator are welcome. Please feel free to fork the reposit
 
 - Thanks to Cysharp for the [R3](https://github.com/Cysharp/R3) package which enhances the functionality of Unity projects.
 - Thanks to the developers of [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity) for providing a bridge to integrate NuGet packages within Unity.
-
