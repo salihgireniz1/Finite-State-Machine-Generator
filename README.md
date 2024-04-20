@@ -55,8 +55,9 @@ Once the dependencies are installed, you can add FSM Generator to your project b
 
 ## Usage
 
-The FSM Generator can be used in two primary ways: through the Unity Editor window or by manually creating and configuring the Scriptable Object.
 https://github.com/salihgireniz1/Finite-State-Machine-Generator/assets/78977599/1fef240f-8726-4e29-b29d-9ee8bc782910
+
+The FSM Generator can be used in two primary ways: through the Unity Editor window or by manually creating and configuring the Scriptable Object.
 
 ### Using the Editor Window
 
